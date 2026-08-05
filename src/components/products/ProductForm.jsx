@@ -1,7 +1,6 @@
 import React from 'react'
 
-
-export const ProductCard = () => {
+const ProductForm = () => {
   return (
     <div>
       
@@ -9,3 +8,4 @@ export const ProductCard = () => {
   )
 }
 
+export default ProductForm
