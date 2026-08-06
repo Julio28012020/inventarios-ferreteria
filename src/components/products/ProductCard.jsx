@@ -40,9 +40,9 @@ export const ProductCard = ({ product, onEdit }) => {
       </div>
 
       {/* Cuerpo de la Tarjeta */}
-      <div className="p-5 flex-grow">
+      <div className="p-5 grow">
         <div className="flex items-start justify-between gap-2 mb-1">
-          <h3 className="text-base font-bold text-slate-800 line-clamp-1 flex-grow" title={product.name}>
+          <h3 className="text-base font-bold text-slate-800 line-clamp-1 grow" title={product.name}>
             {product.name}
           </h3>
         </div>
@@ -53,7 +53,7 @@ export const ProductCard = ({ product, onEdit }) => {
         </p>
 
         {/* Descripción corta con límite de 2 líneas */}
-        <p className="text-slate-500 text-xs line-clamp-2 min-h-[32px] mb-4">
+        <p className="text-slate-500 text-xs line-clamp-2 min-h-8 mb-4">
           {product.description || 'Sin descripción detallada registrada.'}
         </p>
 
