@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import productService from './services/productService'; // El archivo de Axios que creamos antes
 import { ProductCard } from './components/products/ProductCard';
+import { ProductForm } from './components/products/ProductForm';
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     const loadInventory = async () => {
@@ -30,21 +32,56 @@ export default function ProductList() {
     loadInventory();
   }, []);
 
-  // 🛑 CONTROL DE FLUJO: Si está cargando o hay error, NO renderiza las tarjetas
-  if (loading) return <div className="p-8 text-center font-bold text-slate-600">Cargando productos desde la ferretería...</div>;
-  if (error) return <div className="p-8 text-center font-bold text-rose-600">{error}</div>;
-  if (products.length === 0) return <div className="p-8 text-center text-slate-500">No hay productos registrados en el inventario.</div>;
+  const handleCreate = () => {
+  setShowForm(true);
+};
 
-  return (
-    <div className="p-8 bg-slate-100 min-h-screen">
-      <h1 className="text-2xl font-black text-slate-800 mb-6 uppercase">📦 Inventario de Ferretería</h1>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {products.map((prod) => (
-          // Envia el objeto iterado directamente a la propiedad 'product'
-          <ProductCard key={prod.code} product={prod} />
-        ))}
-      </div>
+  //CONTROL DE FLUJO
+  if (loading) {
+    return <div>Cargando productos desde la ferretería...</div>;
+  }
+
+  if (error) {
+   return <div>{error}</div>;
+  }
+
+  if (products.length === 0) {
+    return <div>No hay productos registrados en el inventario.</div>;
+  }
+
+   return (
+  <div className="p-8 bg-slate-100 min-h-screen">
+
+    <div className="flex items-center justify-between mb-6">
+
+      <h1 className="text-2xl font-black text-slate-800 uppercase">
+        📦 Inventario de Ferretería
+      </h1>
+
+      <button
+        onClick={handleCreate}
+        className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-4 py-2 rounded-lg"
+      >
+        + Nuevo producto
+      </button>
+
     </div>
-  );
+
+    {showForm && (
+      <ProductForm />
+    )}
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+      {products.map((prod) => (
+        <ProductCard
+          key={prod.code}
+          product={prod}
+        />
+      ))}
+
+    </div>
+
+  </div>
+);
 }
