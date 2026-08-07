@@ -1,16 +1,7 @@
-import MainLayout from './components/layout/MainLayout';
-import ProductsPage from './pages/ProductsPage';
+import { AppRouter } from './routes/AppRouter';
 
 function App() {
-  return (
-    <MainLayout>
-      {/* 
-        Todo lo que pongamos aquí adentro será recibido como "children" 
-        por el MainLayout y renderizado en la zona central gris.
-      */}
-      <ProductsPage />
-    </MainLayout>
-  );
+  return <AppRouter />;
 }
 
 export default App;

@@ -1,4 +1,11 @@
+import { Link, useLocation } from 'react-router-dom';
+
 const Sidebar = () => {
+  const location = useLocation();
+
+  // Función auxiliar para saber qué ruta está activa y cambiarle el color de fondo
+  const isActive = (path) => location.pathname === path;
+
   return (
     <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col min-h-screen">
       {/* Branding / Logo */}
@@ -12,33 +19,43 @@ const Sidebar = () => {
       <nav className="flex-1 py-4 overflow-y-auto">
         <ul className="space-y-1 px-3">
           <li>
-            <a href="#" className="flex items-center gap-3 px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+            <Link
+              to="/"
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                isActive('/') ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 hover:text-white'
+              }`}
+            >
               <span>🏠</span> Inicio
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-              <span>🛒</span> Ventas
-            </a>
+            <Link
+              to="/inventario/productos"
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                isActive('/inventario/productos') ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 hover:text-white'
+              }`}
+            >
+              <span>📦</span> Inventario (Productos)
+            </Link>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-              <span>📦</span> Inventario
-            </a>
+            <span className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-500 cursor-not-allowed">
+              <span>🛒</span> Ventas (Próximamente)
+            </span>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
-              <span>👥</span> Proveedores
-            </a>
+            <span className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-500 cursor-not-allowed">
+              <span>👥</span> Proveedores (Próximamente)
+            </span>
           </li>
         </ul>
       </nav>
 
       {/* Footer del Sidebar */}
       <div className="p-4 border-t border-slate-800">
-        <a href="#" className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 hover:text-white transition-colors">
+        <span className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-500 cursor-not-allowed">
           <span>⚙️</span> Configuración
-        </a>
+        </span>
       </div>
     </aside>
   );
