@@ -11,7 +11,7 @@ const ProductsPage = () => {
     const term = searchTerm.toLowerCase();
     const code = (product.code || '').toLowerCase();
     const name = (product.name || '').toLowerCase();
-    const brand = (product.brand || '').toLowerCase();
+    const brand = product.brandId ? String(product.brandId).toLowerCase() : '';
     const category = (product.category || '').toLowerCase();
     const reference = (product.reference || '').toLowerCase();
 
