@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import brandService from '../../services/brandService';
+import productService from '../../services/productService';
+
 
 export const ProductForm = () => {
 
@@ -7,12 +10,63 @@ export const ProductForm = () => {
   const [description, setDescription] = useState('');
   const [brandId, setBrandId] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [brands, setBrands] = useState([]);
+  const [purchasePrice, setPurchasePrice] = useState('');
+  const [salePrice, setSalePrice] = useState('');
+  const [currentStock, setCurrentStock] = useState('');
+  const [minimumStock, setMinimumStock] = useState('');
+  const [unitOfMeasure, setUnitOfMeasure] = useState('PIECE');
+  const [status, setStatus] = useState('ACTIVE');
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const loadBrands = async () => {
+      try {
+        const data = await brandService.getAllBrands();
+
+        if (Array.isArray(data)) {
+          setBrands(data);
+        } else {
+          setBrands([]);
+        }
+
+      } catch (error) {
+        console.error('Error cargando las marcas:', error);
+      }
+    };
+
+    loadBrands();
+  }, []);
+
+      const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log('Formulario enviado');
+    // Construimos el objeto EXACTAMENTE como lo pide Product.java
+    const productData = {
+      code: code,
+      name: name,
+      description: description,
+      brandId: Number(brandId), // Volvemos a usar la propiedad plana brandId como un entero
+      imageUrl: imageUrl,
+      purchasePrice: Number(purchasePrice),
+      salePrice: Number(salePrice),
+      currentStock: Number(currentStock),
+      minimumStock: Number(minimumStock),
+      unitOfMeasure: unitOfMeasure, // Asegúrate de elegir una opción del select
+      status: status // Asegúrate de elegir una opción del select
+    };
+
+    try {
+      // Enviamos el objeto plano por Axios
+      await productService.createProduct(productData);
+      alert('¡Producto guardado con éxito!');
+      resetForm();
+    } catch (error) {
+      console.error(error);
+      alert('Hubo un error al guardar el producto');
+    }
   };
+
+
 
   return (
     <form
@@ -83,6 +137,14 @@ export const ProductForm = () => {
           <option value="">
             Seleccione una marca
           </option>
+
+          {[...brands]
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((brand) => (
+              <option key={brand.id} value={brand.id}>
+                {brand.name}
+              </option>
+            ))}
         </select>
       </div>
 
@@ -99,6 +161,116 @@ export const ProductForm = () => {
           placeholder="Ej: https://ejemplo.com/martillo.jpg"
           className="w-full border border-slate-300 rounded-lg px-3 py-2"
         />
+      </div>
+
+      {/* Precio de compra */}
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-slate-700 mb-1">
+          Precio de compra
+        </label>
+
+        <input
+          type="number"
+          value={purchasePrice}
+          onChange={(e) => setPurchasePrice(e.target.value)}
+          placeholder="Ej: 25000"
+          className="w-full border border-slate-300 rounded-lg px-3 py-2"
+        />
+      </div>
+
+      {/* Precio de venta */}
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-slate-700 mb-1">
+          Precio de venta
+        </label>
+
+        <input
+          type="number"
+          value={salePrice}
+          onChange={(e) => setSalePrice(e.target.value)}
+          placeholder="Ej: 35000"
+          min="0"
+          step="0.01"
+          className="w-full border border-slate-300 rounded-lg px-3 py-2"
+        />
+      </div>
+
+      {/* Stock actual */}
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-slate-700 mb-1">
+          Stock actual
+        </label>
+
+        <input
+          type="number"
+          value={currentStock}
+          onChange={(e) => setCurrentStock(e.target.value)}
+          placeholder="Ej: 20"
+          min="0"
+          step="0.01"
+          className="w-full border border-slate-300 rounded-lg px-3 py-2"
+        />
+      </div>
+
+      {/* Stock mínimo */}
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-slate-700 mb-1">
+          Stock mínimo
+        </label>
+
+        <input
+          type="number"
+          value={minimumStock}
+          onChange={(e) => setMinimumStock(e.target.value)}
+          placeholder="Ej: 5"
+          min="0"
+          step="0.01"
+          className="w-full border border-slate-300 rounded-lg px-3 py-2"
+        />
+      </div>
+
+      {/* Unidad de medida */}
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-slate-700 mb-1">
+          Unidad de medida
+        </label>
+
+        <select
+          value={unitOfMeasure}
+          onChange={(e) => setUnitOfMeasure(e.target.value)}
+          className="w-full border border-slate-300 rounded-lg px-3 py-2"
+        >
+          <option value="BOX">Caja</option>
+          <option value="GALLON">Galón</option>
+          <option value="INCH">Pulgada</option>
+          <option value="KILOGRAM">Kilogramo</option>
+          <option value="LITER">Litro</option>
+          <option value="METER">Metro</option>
+          <option value="SQUARE_METER">Metro cuadrado</option>
+          <option value="PACK">Paquete</option>
+          <option value="POUND">Libra</option>
+          <option value="PIECE">Pieza</option>
+          <option value="QUART">Cuarto</option>
+          <option value="ROLL">Rollo</option>
+          <option value="TON">Tonelada</option>
+        </select>
+      </div>
+
+      {/* Estado */}
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-slate-700 mb-1">
+          Estado
+        </label>
+
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="w-full border border-slate-300 rounded-lg px-3 py-2"
+        >
+          <option value="ACTIVE">Activo</option>
+          <option value="DISCONTINUED">Descontinuado</option>
+          <option value="INACTIVE">Inactivo</option>
+        </select>
       </div>
 
       {/* Botón */}
