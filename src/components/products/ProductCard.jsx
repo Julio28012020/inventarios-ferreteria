@@ -1,106 +1,181 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-export const ProductCard = ({ product, onEdit }) => {
-    // 1. Validar que product exista antes de hacer cualquier operación
-  if (!product) return null; 
-  // Validación para saber si el inventario está en un nivel crítico
-  const isStockCritical = product.currentStock <= product.minimumStock;
+const unitLabels = {
+  BOX: { singular: 'Caja', plural: 'Cajas' },
+  GALLON: { singular: 'Galón', plural: 'Galones' },
+  INCH: { singular: 'Pulgada', plural: 'Pulgadas' },
+  KILOGRAM: { singular: 'Kilogramo', plural: 'Kilogramos' },
+  LITER: { singular: 'Litro', plural: 'Litros' },
+  METER: { singular: 'Metro', plural: 'Metros' },
+  SQUARE_METER: { singular: 'Metro cuadrado', plural: 'Metros cuadrados' },
+  PACK: { singular: 'Paquete', plural: 'Paquetes' },
+  POUND: { singular: 'Libra', plural: 'Libras' },
+  PIECE: { singular: 'Pieza', plural: 'Piezas' },
+  QUART: { singular: 'Cuarto', plural: 'Cuartos' },
+  ROLL: { singular: 'Rollo', plural: 'Rollos' },
+  TON: { singular: 'Tonelada', plural: 'Toneladas' }
+};
 
-  // Formateador de moneda automático para los precios
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('es-CO', {
+export const ProductCard = ({ product, onDelete }) => {
+  if (!product) return null;
+
+  const isStockCritical =
+    product.currentStock <= product.minimumStock;
+
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat('es-CO', {
       style: 'currency',
-      currency: 'COP', // Cambia a 'USD', 'MXN', etc., según tu moneda
+      currency: 'COP',
       minimumFractionDigits: 2
-    }).format(value);
+    }).format(value || 0);
+
+  const unitInfo = unitLabels[product.unitOfMeasure] || {
+    singular: 'Unidad',
+    plural: 'Unidades'
   };
 
+  const stock = product.currentStock ?? 0;
+
+  const unit = stock === 1
+    ? unitInfo.singular
+    : unitInfo.plural;
+
   return (
-    <div className="max-w-sm w-full rounded-xl overflow-hidden shadow-sm bg-white border border-slate-200 hover:shadow-lg transition-all duration-300 flex flex-col justify-between group">
-      
-      {/* Contenedor de Imagen y Estados */}
-      <div className="relative bg-slate-50 h-48 w-full flex items-center justify-center overflow-hidden border-b border-slate-100">
-        <img 
-          className="object-contain h-full w-full p-4 group-hover:scale-105 transition-transform duration-300" 
-          src={product.imageUrl || 'https://placeholder.com'} 
-          alt={product.name}
-        />
-        
-        {/* Badge de Estado del Producto */}
-        <span className={`absolute top-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm text-white ${
-          product.status === 'ACTIVE' ? 'bg-emerald-600' : 'bg-rose-600'
-        }`}>
-          {product.status}
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow flex flex-col justify-between">
+
+      {/* Código y estado */}
+      <div className="flex justify-between items-start gap-2 mb-3">
+        <span className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded text-xs font-bold tracking-wider">
+          {product.code || 'S/C'}
         </span>
-        
-        {/* Código SKU único mapeado desde tu base de datos */}
-        <span className="absolute bottom-2 left-3 bg-slate-900/80 backdrop-blur-xs text-white text-[10px] tracking-wider px-2 py-0.5 rounded font-mono">
-          SKU: {product.code}
+
+        <span
+          className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+            (product.status || 'ACTIVE') === 'ACTIVE'
+              ? 'bg-green-100 text-green-800'
+              : 'bg-red-100 text-red-800'
+          }`}
+        >
+          {product.status || 'ACTIVE'}
         </span>
       </div>
 
-      {/* Cuerpo de la Tarjeta */}
-      <div className="p-5 grow">
-        <div className="flex items-start justify-between gap-2 mb-1">
-          <h3 className="text-base font-bold text-slate-800 line-clamp-1 grow" title={product.name}>
-            {product.name}
-          </h3>
-        </div>
-        
-        {/* Identificador de la Marca */}
-        <p className="text-[11px] font-semibold text-amber-600 uppercase tracking-wider mb-2">
-          Marca ID: {product.brandId}
+      {/* Nombre del producto */}
+      <div className="mb-4 pb-3 border-b border-gray-100">
+        <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
+          Producto
         </p>
 
-        {/* Descripción corta con límite de 2 líneas */}
-        <p className="text-slate-500 text-xs line-clamp-2 min-h-8 mb-4">
-          {product.description || 'Sin descripción detallada registrada.'}
-        </p>
-
-        {/* Módulo de Inventario con Alerta Visual */}
-        <div className={`rounded-lg p-3 flex justify-between items-center text-xs border ${
-          isStockCritical 
-            ? 'bg-rose-50 border-rose-100 text-rose-900' 
-            : 'bg-slate-50 border-slate-100 text-slate-700'
-        }`}>
-          <div>
-            <p className="text-[10px] font-medium uppercase tracking-wider opacity-70">Stock Actual</p>
-            <p className={`text-base font-black ${isStockCritical ? 'text-rose-600' : 'text-slate-800'}`}>
-              {product.currentStock} <span className="text-xs font-normal opacity-80">{product.unitOfMeasure?.toLowerCase()}(s)</span>
-            </p>
-          </div>
-          <div className="text-right border-l border-slate-200 pl-3">
-            <p className="text-[10px] font-medium uppercase tracking-wider opacity-70">Mínimo</p>
-            <p className="text-sm font-bold">{product.minimumStock}</p>
-          </div>
-        </div>
+        <h3 className="text-xl font-bold text-gray-900 leading-tight">
+          {product.name || 'Sin nombre'}
+        </h3>
       </div>
 
-      {/* Pie de Tarjeta: Precios de venta y Acciones */}
-      <div className="px-5 pb-5 pt-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Precio Público</p>
-          <p className="text-xl font-black text-slate-900">
+      {/* Marca */}
+      <p>
+        <span className="font-medium text-gray-500">
+          Marca:
+        </span>{' '}
+        <strong className="text-gray-800">
+          {product.brand?.name || 'No especificada'}
+        </strong>
+      </p>
+
+      {/* Categoría */}
+      <p>
+        <span className="font-medium text-gray-500">
+          Categoría:
+        </span>{' '}
+        <strong className="text-gray-800">
+          {product.category?.name || 'General'}
+        </strong>
+      </p>
+
+      {/* Precio de compra */}
+      <p>
+        <span className="font-medium text-gray-500">
+          Precio compra:
+        </span>{' '}
+        <strong className="text-gray-800">
+          {formatCurrency(product.purchasePrice)}
+        </strong>
+      </p>
+
+      {/* Unidad */}
+      <p>
+        <span className="font-medium text-gray-500">
+          Unidad:
+        </span>{' '}
+        <strong className="text-gray-800">
+          {unit}
+        </strong>
+      </p>
+
+      {/* Stock */}
+      <p>
+        📦{' '}
+        <span className="font-medium text-gray-500">
+          Stock:
+        </span>{' '}
+        <strong
+          className={
+            isStockCritical
+              ? 'text-red-600'
+              : 'text-gray-800'
+          }
+        >
+          {stock} {unit}
+        </strong>
+      </p>
+
+      {/* Stock mínimo */}
+      <p>
+        ⚠️{' '}
+        <span className="font-medium text-gray-500">
+          Stock mínimo:
+        </span>{' '}
+        <strong className="text-gray-800">
+          {product.minimumStock ?? 0}
+        </strong>
+      </p>
+
+      {/* Precio de venta y acciones */}
+      <div className="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between">
+
+        <span className="text-sm text-gray-500">
+          💰{' '}
+          <strong className="text-green-700">
             {formatCurrency(product.salePrice)}
-          </p>
-        </div>
-        
-        {/* Dispara la función onEdit pasando el código del producto */}
-        {onEdit && (
-          <button 
-            onClick={() => onEdit(product.code)}
-            className="bg-amber-500 hover:bg-amber-600 text-white font-bold p-2 rounded-lg shadow-sm hover:shadow transition-all duration-200 cursor-pointer"
+          </strong>
+        </span>
+
+        <div className="flex items-center gap-3">
+
+          {/* Editar */}
+          <Link
+            to={`/inventario/editar/${product.id}`}
+            className="text-blue-600 hover:text-blue-800 text-lg transition-transform hover:scale-110"
             title="Editar producto"
           >
-            <svg xmlns="http://w3.org" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
+            ✏️
+          </Link>
+
+          {/* Ocultar */}
+          <button
+            type="button"
+            onClick={() => onDelete(product)}
+            className="text-red-600 hover:text-red-800 text-lg transition-transform hover:scale-110"
+            title="Ocultar producto"
+          >
+            👁️
           </button>
-        )}
+
+        </div>
       </div>
 
     </div>
   );
 };
 
-
+export default ProductCard;

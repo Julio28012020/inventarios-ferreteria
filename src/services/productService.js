@@ -1,31 +1,31 @@
 import axiosClient from '../config/axiosClient';
 
 const productService = {
-  
+
+  // Obtener todos los productos
   getAllProducts: async () => {
     const response = await axiosClient.get('/products');
     return response.data;
   },
 
-  getProductByCode: async (code) => {
-    const response = await axiosClient.get(`/products/${code}`);
+  // Obtener un producto por ID
+  getProductById: async (id) => {
+    const response = await axiosClient.get(`/products/${id}`);
     return response.data;
   },
 
+  // Crear un producto
   createProduct: async (productData) => {
     const response = await axiosClient.post('/products', productData);
     return response.data;
   },
 
-  updateProduct: async (code, productData) => {
-    const response = await axiosClient.put(`/products/${code}`, productData);
+  // Actualizar un producto por ID
+  updateProduct: async (id, productData) => {
+    const response = await axiosClient.put(`/products/${id}`, productData);
     return response.data;
   },
 
-  deleteProduct: async (code) => {
-    const response = await axiosClient.delete(`/products/${code}`);
-    return response.data;
-  }
 };
 
 export default productService;
