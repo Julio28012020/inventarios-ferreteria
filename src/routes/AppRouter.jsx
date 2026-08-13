@@ -3,6 +3,7 @@ import MainLayout from '../components/layout/MainLayout';
 import HomePage from '../pages/HomePage';
 import ProductsPage from '../pages/ProductsPage';
 import { ProductForm } from '../components/products/ProductForm';
+import EditProductPage from '../pages/EditProductPage';
 
 export const AppRouter = () => {
   return (
@@ -11,6 +12,7 @@ export const AppRouter = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/inventario/productos" element={<ProductsPage />} />
+          <Route path="/inventario/editar/:id" element={<EditProductPage />} />
           <Route 
             path="/inventario/nuevo" 
             element={
