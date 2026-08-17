@@ -80,7 +80,6 @@ const EditProductPage = () => {
       imageUrl,
       purchasePrice: Number(purchasePrice),
       salePrice: Number(salePrice),
-      currentStock: Number(currentStock),
       minimumStock: Number(minimumStock),
       unitOfMeasure,
       status
@@ -211,11 +210,13 @@ const EditProductPage = () => {
           <input
             type="number"
             value={purchasePrice}
-            onChange={(e) => setPurchasePrice(e.target.value)}
-            min="0"
-            step="0.01"
-            className="w-full border border-slate-300 rounded-lg px-3 py-2"
+            disabled
+            className="w-full border border-slate-200 bg-gray-100 text-gray-500 rounded-lg px-3 py-2 cursor-not-allowed"
           />
+
+          <p className="text-xs text-gray-500 mt-1">
+            El precio de compra no se puede modificar desde la edición.
+          </p>
         </div>
 
         {/* Precio venta */}
@@ -234,7 +235,7 @@ const EditProductPage = () => {
           />
         </div>
 
-        {/* Stock actual */}
+        {/* Stock actual - NO EDITABLE */}
         <div className="mt-4">
           <label className="block text-sm font-medium text-slate-700 mb-1">
             Stock actual
@@ -243,11 +244,13 @@ const EditProductPage = () => {
           <input
             type="number"
             value={currentStock}
-            onChange={(e) => setCurrentStock(e.target.value)}
-            min="0"
-            step="0.01"
-            className="w-full border border-slate-300 rounded-lg px-3 py-2"
+            disabled
+            className="w-full border border-slate-200 bg-gray-100 text-gray-500 rounded-lg px-3 py-2 cursor-not-allowed"
           />
+
+          <p className="text-xs text-gray-500 mt-1">
+            El stock se modifica mediante movimientos de inventario.
+          </p>
         </div>
 
         {/* Stock mínimo */}
@@ -305,7 +308,6 @@ const EditProductPage = () => {
             className="w-full border border-slate-300 rounded-lg px-3 py-2"
           >
             <option value="ACTIVE">Activo</option>
-            <option value="DISCONTINUED">Descontinuado</option>
             <option value="INACTIVE">Inactivo</option>
           </select>
         </div>

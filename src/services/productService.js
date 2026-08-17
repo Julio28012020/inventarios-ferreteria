@@ -26,6 +26,12 @@ const productService = {
     return response.data;
   },
 
+  // Descontinuar un producto por ID
+  deleteProduct: async (id) => {
+    const response = await axiosClient.delete(`/products/${id}`);
+    return response.data;
+  },
+
 };
 
 export default productService;
