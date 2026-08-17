@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import brandService from '../../services/brandService';
 import productService from '../../services/productService';
+import { useNavigate } from 'react-router-dom';
 
 
 export const ProductForm = () => {
+  const navigate = useNavigate();
 
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
@@ -61,7 +63,7 @@ export const ProductForm = () => {
       // Enviamos el objeto plano por Axios
       await productService.createProduct(productData);
       alert('¡Producto guardado con éxito!');
-      resetForm();
+      navigate('/inventario/productos'); // Redirige a la lista de productos después de guardar
     } catch (error) {
       console.error(error);
       alert('Hubo un error al guardar el producto');

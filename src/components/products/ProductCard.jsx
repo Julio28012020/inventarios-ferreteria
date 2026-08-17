@@ -67,16 +67,20 @@ export const ProductCard = ({ product, onDelete }) => {
         </h3>
       </div>
 
-      {/* URL de la imagen */}
-      {product.imageUrl && (
-        <div className="mb-4 w-full h-40 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
+      {/* Imagen del producto */}
+      <div className="mb-4 w-full h-40 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
+        {product.imageUrl ? (
           <img
             src={product.imageUrl}
             alt={product.name || 'Imagen del producto'}
             className="w-full h-full object-contain"
           />
-        </div>
-      )}
+        ) : (
+          <span className="text-gray-400 text-sm">
+            Producto sin imagen
+          </span>
+        )}
+      </div>
 
       {/* Marca */}
       <p>
