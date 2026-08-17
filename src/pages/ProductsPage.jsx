@@ -2,29 +2,40 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useProducts } from '../hooks/useProducts';
 import ProductCard from '../components/products/ProductCard';
+import Alert from '../components/ui/Alert';
 
 const ProductsPage = () => {
   const { products, loading, error } = useProducts();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [productToDelete, setProductToDelete] = useState(null);
   const [hiddenProducts, setHiddenProducts] = useState([]);
 
-  // Abrir ventana de confirmación
-  const handleDeleteClick = (product) => {
-    setProductToDelete(product);
-  };
+  // Ocultar producto
+  const handleDeleteClick = async (product) => {
 
-  // Confirmar ocultamiento
-  const handleConfirmDelete = () => {
-    if (!productToDelete) return;
+    const result = await Alert.question({
+      title: '¿Ocultar producto?',
+      text: `¿Está seguro de que desea ocultar "${product.name}"?`,
+      confirmText: 'Sí, ocultar',
+      cancelText: 'Cancelar',
+    });
 
+    // Si el usuario cancela, no hacemos nada
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    // Ocultar producto
     setHiddenProducts((current) => [
       ...current,
-      productToDelete.id
+      product.id
     ]);
 
-    setProductToDelete(null);
+    // Mostrar alerta de éxito
+    await Alert.success({
+      title: 'Producto ocultado',
+      text: `El producto "${product.name}" se ocultó correctamente.`,
+    });
   };
 
   // Filtrar productos
@@ -155,69 +166,6 @@ const ProductsPage = () => {
 
           )}
         </>
-      )}
-
-      {/* Modal de confirmación */}
-      {productToDelete && (
-
-        <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-          onClick={() => setProductToDelete(null)}
-        >
-
-          <div
-            className="bg-white rounded-xl shadow-xl w-full max-w-md p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-
-            <h2 className="text-xl font-bold text-gray-800 mb-3">
-              🗑️ Ocultar producto
-            </h2>
-
-            <p className="text-gray-600 mb-4">
-              ¿Está seguro de que desea ocultar este producto?
-            </p>
-
-            <div className="bg-gray-100 rounded-lg p-3 mb-5">
-
-              <p className="font-bold text-gray-800">
-                {productToDelete.name}
-              </p>
-
-              <p className="text-sm text-gray-500">
-                Código: {productToDelete.code}
-              </p>
-
-            </div>
-
-            <p className="text-sm text-gray-500 mb-5">
-              El producto seguirá existiendo en la base de datos.
-            </p>
-
-            <div className="flex justify-end gap-3">
-
-              <button
-                type="button"
-                onClick={() => setProductToDelete(null)}
-                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
-              >
-                Cancelar
-              </button>
-
-              <button
-                type="button"
-                onClick={handleConfirmDelete}
-                className="px-4 py-2 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700"
-              >
-                Confirmar
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
       )}
 
     </div>

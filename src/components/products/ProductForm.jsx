@@ -249,7 +249,7 @@ export const ProductForm = () => {
           <option value="SQUARE_METER">Metro cuadrado</option>
           <option value="PACK">Paquete</option>
           <option value="POUND">Libra</option>
-          <option value="PIECE">Pieza</option>
+          <option value="PIECE">Unidad</option>
           <option value="QUART">Cuarto</option>
           <option value="ROLL">Rollo</option>
           <option value="TON">Tonelada</option>
