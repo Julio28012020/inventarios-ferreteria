@@ -11,7 +11,7 @@ const unitLabels = {
   SQUARE_METER: { singular: 'Metro cuadrado', plural: 'Metros cuadrados' },
   PACK: { singular: 'Paquete', plural: 'Paquetes' },
   POUND: { singular: 'Libra', plural: 'Libras' },
-  PIECE: { singular: 'Pieza', plural: 'Piezas' },
+  PIECE: { singular: 'Unidad', plural: 'Unidades' },
   QUART: { singular: 'Cuarto', plural: 'Cuartos' },
   ROLL: { singular: 'Rollo', plural: 'Rollos' },
   TON: { singular: 'Tonelada', plural: 'Toneladas' }
@@ -51,11 +51,10 @@ export const ProductCard = ({ product, onDelete }) => {
         </span>
 
         <span
-          className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-            (product.status || 'ACTIVE') === 'ACTIVE'
-              ? 'bg-green-100 text-green-800'
-              : 'bg-red-100 text-red-800'
-          }`}
+          className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${(product.status || 'ACTIVE') === 'ACTIVE'
+            ? 'bg-green-100 text-green-800'
+            : 'bg-red-100 text-red-800'
+            }`}
         >
           {product.status || 'ACTIVE'}
         </span>
@@ -63,14 +62,21 @@ export const ProductCard = ({ product, onDelete }) => {
 
       {/* Nombre del producto */}
       <div className="mb-4 pb-3 border-b border-gray-100">
-        <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
-          Producto
-        </p>
-
         <h3 className="text-xl font-bold text-gray-900 leading-tight">
           {product.name || 'Sin nombre'}
         </h3>
       </div>
+
+      {/* URL de la imagen */}
+      {product.imageUrl && (
+        <div className="mb-4 w-full h-40 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
+          <img
+            src={product.imageUrl}
+            alt={product.name || 'Imagen del producto'}
+            className="w-full h-full object-contain"
+          />
+        </div>
+      )}
 
       {/* Marca */}
       <p>
@@ -108,7 +114,7 @@ export const ProductCard = ({ product, onDelete }) => {
           Unidad:
         </span>{' '}
         <strong className="text-gray-800">
-          {unit}
+          {unitInfo.singular}
         </strong>
       </p>
 
@@ -168,7 +174,7 @@ export const ProductCard = ({ product, onDelete }) => {
             className="text-red-600 hover:text-red-800 text-lg transition-transform hover:scale-110"
             title="Ocultar producto"
           >
-            👁️
+            🗑️
           </button>
 
         </div>

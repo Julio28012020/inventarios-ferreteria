@@ -91,7 +91,7 @@ const EditProductPage = () => {
 
       alert('¡Producto actualizado correctamente!');
 
-      navigate('/inventario');
+      navigate('/inventario/productos');
 
     } catch (error) {
       console.error('Error actualizando producto:', error);
@@ -286,7 +286,7 @@ const EditProductPage = () => {
             <option value="SQUARE_METER">Metro cuadrado</option>
             <option value="PACK">Paquete</option>
             <option value="POUND">Libra</option>
-            <option value="PIECE">Pieza</option>
+            <option value="PIECE">Unidad</option>
             <option value="QUART">Cuarto</option>
             <option value="ROLL">Rollo</option>
             <option value="TON">Tonelada</option>
@@ -322,7 +322,7 @@ const EditProductPage = () => {
 
           <button
             type="button"
-            onClick={() => navigate('/inventario')}
+            onClick={() => navigate('/inventario/productos')}
             className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold px-4 py-2 rounded-lg"
           >
             ↩️ Cancelar
