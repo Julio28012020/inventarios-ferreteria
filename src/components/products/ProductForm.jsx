@@ -45,7 +45,7 @@ export const ProductForm = () => {
       code: code,
       name: name,
       description: description,
-      brandId: Number(brandId), // Volvemos a usar la propiedad plana brandId como un entero
+      brandId: Number(brandId),
       imageUrl: imageUrl,
       purchasePrice: Number(purchasePrice),
       salePrice: Number(salePrice),
@@ -54,6 +54,8 @@ export const ProductForm = () => {
       unitOfMeasure: unitOfMeasure, // Asegúrate de elegir una opción del select
       status: status // Asegúrate de elegir una opción del select
     };
+
+    console.log(productData);
 
     try {
       // Enviamos el objeto plano por Axios
