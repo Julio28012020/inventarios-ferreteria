@@ -3,48 +3,53 @@ import { Link } from 'react-router-dom';
 import { useProducts } from '../hooks/useProducts';
 import ProductCard from '../components/products/ProductCard';
 import Alert from '../components/ui/Alert';
+import productService from '../services/productService';
 
 const ProductsPage = () => {
   const { products, loading, error } = useProducts();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [hiddenProducts, setHiddenProducts] = useState([]);
 
-  // Ocultar producto
+  // Descontinuar producto
   const handleDeleteClick = async (product) => {
 
     const result = await Alert.question({
-      title: '¿Ocultar producto?',
-      text: `¿Está seguro de que desea ocultar "${product.name}"?`,
-      confirmText: 'Sí, ocultar',
+      title: '¿Descontinuar producto?',
+      text: `¿Está seguro de que desea descontinuar "${product.name}"?`,
+      confirmText: 'Sí, descontinuar',
       cancelText: 'Cancelar',
     });
 
-    // Si el usuario cancela, no hacemos nada
     if (!result.isConfirmed) {
       return;
     }
 
-    // Ocultar producto
-    setHiddenProducts((current) => [
-      ...current,
-      product.id
-    ]);
+    try {
 
-    // Mostrar alerta de éxito
-    await Alert.success({
-      title: 'Producto ocultado',
-      text: `El producto "${product.name}" se ocultó correctamente.`,
-    });
+      // Enviar solicitud al backend
+      await productService.deleteProduct(product.id);
+
+      await Alert.success({
+        title: 'Producto descontinuado',
+        text: `El producto "${product.name}" fue descontinuado correctamente.`,
+      });
+
+      // Recargar la lista
+      window.location.reload();
+
+    } catch (error) {
+
+      console.error('Error descontinuando producto:', error);
+
+      await Alert.error({
+        title: 'Error',
+        text: 'No se pudo descontinuar el producto.',
+      });
+    }
   };
 
   // Filtrar productos
   const filteredProducts = products.filter((product) => {
-
-    // No mostrar productos ocultos
-    if (hiddenProducts.includes(product.id)) {
-      return false;
-    }
 
     const term = searchTerm.toLowerCase();
 

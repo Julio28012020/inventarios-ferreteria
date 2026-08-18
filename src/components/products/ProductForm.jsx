@@ -39,8 +39,13 @@ export const ProductForm = () => {
     loadBrands();
   }, []);
 
-      const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!brandId) {
+      alert('Debe seleccionar una marca.');
+      return;
+    }
 
     // Construimos el objeto EXACTAMENTE como lo pide Product.java
     const productData = {
@@ -272,7 +277,6 @@ export const ProductForm = () => {
           className="w-full border border-slate-300 rounded-lg px-3 py-2"
         >
           <option value="ACTIVE">Activo</option>
-          <option value="DISCONTINUED">Descontinuado</option>
           <option value="INACTIVE">Inactivo</option>
         </select>
       </div>

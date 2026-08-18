@@ -171,12 +171,12 @@ export const ProductCard = ({ product, onDelete }) => {
             ✏️
           </Link>
 
-          {/* Ocultar */}
+          {/* Eliminar producto */}
           <button
             type="button"
             onClick={() => onDelete(product)}
             className="text-red-600 hover:text-red-800 text-lg transition-transform hover:scale-110"
-            title="Ocultar producto"
+            title="Eliminar producto"
           >
             🗑️
           </button>
