@@ -4,6 +4,8 @@ import HomePage from '../pages/HomePage';
 import ProductsPage from '../pages/ProductsPage';
 import { ProductForm } from '../components/products/ProductForm';
 import EditProductPage from '../pages/EditProductPage';
+import { SuppliersPage } from '../pages/SuppliersPage';
+import { NewSupplierPage } from '../pages/NewSupplierPage';
 
 export const AppRouter = () => {
   return (
@@ -13,6 +15,8 @@ export const AppRouter = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/inventario/productos" element={<ProductsPage />} />
           <Route path="/inventario/editar/:id" element={<EditProductPage />} />
+          <Route path='/proveedores' element={<SuppliersPage />} />
+          <Route path="/proveedores/nuevo" element={<NewSupplierPage />} />
           <Route 
             path="/inventario/nuevo" 
             element={

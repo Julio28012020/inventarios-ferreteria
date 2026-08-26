@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -22,7 +22,9 @@ const Sidebar = () => {
             <Link
               to="/"
               className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                isActive('/') ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 hover:text-white'
+                isActive("/")
+                  ? "bg-blue-600 text-white"
+                  : "hover:bg-slate-800 hover:text-white"
               }`}
             >
               <span>🏠</span> Inicio
@@ -32,7 +34,9 @@ const Sidebar = () => {
             <Link
               to="/inventario/productos"
               className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                isActive('/inventario/productos') ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 hover:text-white'
+                isActive("/inventario/productos")
+                  ? "bg-blue-600 text-white"
+                  : "hover:bg-slate-800 hover:text-white"
               }`}
             >
               <span>📦</span> Inventario (Productos)
@@ -44,9 +48,16 @@ const Sidebar = () => {
             </span>
           </li>
           <li>
-            <span className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-500 cursor-not-allowed">
-              <span>👥</span> Proveedores (Próximamente)
-            </span>
+            <Link
+              to="/proveedores"
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                isActive("/proveedores")
+                  ? "bg-blue-600 text-white"
+                  : "hover:bg-slate-800 hover:text-white"
+              }`}
+            >
+              <span>🚚</span> Proveedores
+            </Link>
           </li>
         </ul>
       </nav>
