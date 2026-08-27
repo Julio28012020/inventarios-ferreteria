@@ -21,11 +21,10 @@ const Sidebar = () => {
           <li>
             <Link
               to="/"
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                isActive("/")
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-slate-800 hover:text-white"
-              }`}
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive("/")
+                ? "bg-blue-600 text-white"
+                : "hover:bg-slate-800 hover:text-white"
+                }`}
             >
               <span>🏠</span> Inicio
             </Link>
@@ -33,28 +32,32 @@ const Sidebar = () => {
           <li>
             <Link
               to="/inventario/productos"
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                isActive("/inventario/productos")
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-slate-800 hover:text-white"
-              }`}
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive("/inventario/productos")
+                ? "bg-blue-600 text-white"
+                : "hover:bg-slate-800 hover:text-white"
+                }`}
             >
               <span>📦</span> Inventario (Productos)
             </Link>
           </li>
           <li>
-            <span className="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-500 cursor-not-allowed">
-              <span>🛒</span> Ventas (Próximamente)
-            </span>
+            <Link
+              to="/ventas"
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive("/ventas")
+                  ? "bg-blue-600 text-white"
+                  : "hover:bg-slate-800 hover:text-white"
+                }`}
+            >
+              <span>🛒</span> Ventas
+            </Link>
           </li>
           <li>
             <Link
               to="/proveedores"
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                isActive("/proveedores")
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-slate-800 hover:text-white"
-              }`}
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive("/proveedores")
+                ? "bg-blue-600 text-white"
+                : "hover:bg-slate-800 hover:text-white"
+                }`}
             >
               <span>🚚</span> Proveedores
             </Link>
