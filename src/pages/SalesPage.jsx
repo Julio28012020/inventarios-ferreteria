@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
 import saleService from "../services/saleService";
 import Alert from "../components/ui/Alert";
 
 const SalesPage = () => {
+    const navigate = useNavigate();
     const [cart, setCart] = useState(() => {
         const savedCart = localStorage.getItem("salesCart");
         return savedCart ? JSON.parse(savedCart) : [];
@@ -215,15 +217,30 @@ const SalesPage = () => {
         <div className="p-6">
 
             {/* Encabezado */}
-            <div className="mb-6">
-                <h1 className="text-3xl font-bold text-gray-800">
-                    Nueva venta
-                </h1>
 
-                <p className="text-gray-500 mt-1">
-                    Selecciona los productos que deseas vender
-                </p>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+
+                <div>
+
+                    <h1 className="text-3xl font-bold text-gray-800">
+                        Nueva venta
+                    </h1>
+
+                    <p className="text-gray-500 mt-1">
+                        Selecciona los productos que deseas vender
+                    </p>
+
+                </div>
+
+                <button
+                    onClick={() => navigate("/ventas/historial")}
+                    className="bg-gray-800 hover:bg-gray-900 text-white font-semibold px-5 py-3 rounded-lg transition"
+                >
+                    📋 Historial de ventas
+                </button>
+
             </div>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 

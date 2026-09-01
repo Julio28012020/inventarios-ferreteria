@@ -9,6 +9,9 @@ const SalesHistoryPage = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
 
+    const [paymentFilter, setPaymentFilter] = useState("ALL");
+    const [statusFilter, setStatusFilter] = useState("ALL");
+
     const navigate = useNavigate();
 
     // Cargar ventas
@@ -38,11 +41,6 @@ const SalesHistoryPage = () => {
         loadSales();
     }, []);
 
-    // Filtrar ventas por número
-    const filteredSales = sales.filter((sale) =>
-        sale.id.toString().includes(searchTerm.trim())
-    );
-
     // Formatear fecha
     const formatDate = (date) => {
 
@@ -66,7 +64,7 @@ const SalesHistoryPage = () => {
         });
     };
 
-    // Método de pago
+    // Obtener nombre del método de pago
     const getPaymentMethod = (method) => {
 
         switch (method) {
@@ -85,7 +83,7 @@ const SalesHistoryPage = () => {
         }
     };
 
-    // Estado de venta
+    // Obtener nombre del estado
     const getStatus = (status) => {
 
         switch (status) {
@@ -104,10 +102,34 @@ const SalesHistoryPage = () => {
         }
     };
 
+    // Filtrar ventas
+    const filteredSales = sales.filter((sale) => {
+
+        const search = searchTerm.trim().toLowerCase();
+
+        const matchesSearch =
+            sale.id.toString().includes(search) ||
+            getPaymentMethod(sale.paymentMethod)
+                .toLowerCase()
+                .includes(search) ||
+            getStatus(sale.status)
+                .toLowerCase()
+                .includes(search);
+
+        const matchesPayment =
+            paymentFilter === "ALL" ||
+            sale.paymentMethod === paymentFilter;
+
+        const matchesStatus =
+            statusFilter === "ALL" ||
+            sale.status === statusFilter;
+
+        return matchesSearch && matchesPayment && matchesStatus;
+    });
+
     return (
         <div className="p-6">
 
-            {/* Encabezado */}
             <div className="mb-6">
 
                 <div className="flex items-center justify-between">
@@ -119,12 +141,11 @@ const SalesHistoryPage = () => {
                         </h1>
 
                         <p className="text-gray-500 mt-1">
-                            Consulta las ventas realizadas y sus facturas.
+                            Consulta las ventas realizadas y sus detalles.
                         </p>
 
                     </div>
 
-                    {/* Nueva venta */}
                     <button
                         onClick={() => navigate("/ventas")}
                         className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-lg transition"
@@ -136,12 +157,12 @@ const SalesHistoryPage = () => {
 
             </div>
 
-            {/* Buscador */}
+            {/* Buscador y filtros */}
             <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
 
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-                    <div className="flex-1">
+                    <div>
 
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                             Buscar venta
@@ -149,32 +170,93 @@ const SalesHistoryPage = () => {
 
                         <input
                             type="text"
-                            placeholder="Buscar por número de venta..."
+                            placeholder="ID, método de pago o estado..."
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={(e) =>
+                                setSearchTerm(e.target.value)
+                            }
                             className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
 
                     </div>
 
-                    {/* Cantidad de ventas */}
-                    <div className="text-gray-600">
+                    <div>
 
-                        <p className="text-sm">
-                            Ventas encontradas
-                        </p>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Método de pago
+                        </label>
 
-                        <p className="text-2xl font-bold text-gray-800">
-                            {filteredSales.length}
-                        </p>
+                        <select
+                            value={paymentFilter}
+                            onChange={(e) =>
+                                setPaymentFilter(e.target.value)
+                            }
+                            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+
+                            <option value="ALL">
+                                Todos
+                            </option>
+
+                            <option value="CASH">
+                                Efectivo
+                            </option>
+
+                            <option value="CARD">
+                                Tarjeta
+                            </option>
+
+                            <option value="TRANSFER">
+                                Transferencia
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div>
+
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Estado
+                        </label>
+
+                        <select
+                            value={statusFilter}
+                            onChange={(e) =>
+                                setStatusFilter(e.target.value)
+                            }
+                            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+
+                            <option value="ALL">
+                                Todos
+                            </option>
+
+                            <option value="COMPLETED">
+                                Completadas
+                            </option>
+
+                            <option value="PENDING">
+                                Pendientes
+                            </option>
+
+                            <option value="CANCELLED">
+                                Canceladas
+                            </option>
+
+                        </select>
 
                     </div>
 
                 </div>
 
+                <div className="mt-4 text-sm text-gray-500">
+                    Mostrando {filteredSales.length} de {sales.length} ventas
+                </div>
+
             </div>
 
-            {/* Tabla */}
+            {/*Tabla de ventas*/}
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
 
                 {loading ? (
@@ -197,7 +279,7 @@ const SalesHistoryPage = () => {
 
                         {searchTerm && (
                             <p className="text-gray-400 text-sm mt-2">
-                                Intenta buscar con otro número de venta.
+                                Intenta buscar con otro término.
                             </p>
                         )}
 
@@ -209,7 +291,7 @@ const SalesHistoryPage = () => {
 
                         <table className="w-full">
 
-                            {/* Cabecera */}
+                            {/* Encabezado de la tabla */}
                             <thead className="bg-gray-50 border-b">
 
                                 <tr>
@@ -242,7 +324,7 @@ const SalesHistoryPage = () => {
 
                             </thead>
 
-                            {/* Ventas */}
+                            {/* Datos de las ventas */}
                             <tbody>
 
                                 {filteredSales.map((sale) => (
@@ -252,75 +334,50 @@ const SalesHistoryPage = () => {
                                         className="border-b hover:bg-gray-50 transition"
                                     >
 
-                                        {/* Número de venta */}
                                         <td className="px-6 py-4">
-
                                             <span className="font-bold text-gray-800">
                                                 #{sale.id}
                                             </span>
-
                                         </td>
 
-                                        {/* Fecha */}
                                         <td className="px-6 py-4 text-gray-600">
-
                                             {formatDate(sale.createdAt)}
-
                                         </td>
 
-                                        {/* Método de pago */}
                                         <td className="px-6 py-4 text-gray-600">
-
-                                            {getPaymentMethod(
-                                                sale.paymentMethod
-                                            )}
-
+                                            {getPaymentMethod(sale.paymentMethod)}
                                         </td>
 
-                                        {/* Total */}
                                         <td className="px-6 py-4">
-
                                             <span className="font-bold text-gray-800">
                                                 {formatCurrency(sale.total)}
                                             </span>
-
                                         </td>
 
-                                        {/* Estado */}
                                         <td className="px-6 py-4">
 
                                             <span
-                                                className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${
-                                                    sale.status === "COMPLETED"
+                                                className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${sale.status === "COMPLETED"
                                                         ? "bg-green-100 text-green-700"
                                                         : sale.status === "PENDING"
                                                             ? "bg-yellow-100 text-yellow-700"
                                                             : sale.status === "CANCELLED"
                                                                 ? "bg-red-100 text-red-700"
                                                                 : "bg-gray-100 text-gray-700"
-                                                }`}
+                                                    }`}
                                             >
-
                                                 {getStatus(sale.status)}
-
                                             </span>
 
                                         </td>
 
-                                        {/* Acción */}
                                         <td className="px-6 py-4 text-center">
 
                                             <button
-                                                onClick={() =>
-                                                    navigate(
-                                                        `/ventas/${sale.id}`
-                                                    )
-                                                }
-                                                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-semibold transition"
+                                                onClick={() => navigate(`/ventas/${sale.id}`)}
+                                                className="text-blue-600 hover:text-blue-800 font-semibold transition"
                                             >
-
-                                                Ver factura
-
+                                                Ver detalle
                                             </button>
 
                                         </td>
