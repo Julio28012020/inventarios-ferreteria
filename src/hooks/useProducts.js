@@ -1,39 +1,42 @@
 import { useState, useEffect } from 'react';
 import productService from '../services/productService';
 
-export const useProducts = () => {
-    // 1. Definición de los estados
+export const useProducts = (onlyActive = false) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // 2. Función principal para cargar los datos
     const loadProducts = async () => {
-        setLoading(true); // Iniciamos el estado de carga
-        setError(null);   // Limpiamos errores previos
+        setLoading(true);
+        setError(null);
+
         try {
-            const data = await productService.getAllProducts();
+            const data = onlyActive
+                ? await productService.getActiveProducts()
+                : await productService.getAllProducts();
+
             setProducts(data);
+
         } catch (err) {
-            // Aquí aprovechamos el GlobalExceptionHandler del backend
-            // Si el backend envía un mensaje de error limpio, lo tomamos; si no, usamos un genérico.
-            const errorMessage = err.response?.data?.message || 'Ocurrió un error al intentar conectar con el servidor.';
+            const errorMessage =
+                err.response?.data?.message ||
+                'Ocurrió un error al intentar conectar con el servidor.';
+
             setError(errorMessage);
+
         } finally {
-            setLoading(false); // Apagamos la carga sin importar si falló o fue exitoso
+            setLoading(false);
         }
     };
 
-    // 3. Ejecutar la carga automáticamente cuando el componente que use este hook se monte en pantalla
     useEffect(() => {
         loadProducts();
-    }, []);
+    }, [onlyActive]);
 
-    // 4. Exponemos los estados y funciones para que la vista los pueda utilizar
     return {
         products,
         loading,
         error,
-        refreshProducts: loadProducts // Por si necesitamos recargar la lista manualmente después de crear un producto
+        refreshProducts: loadProducts
     };
 };

@@ -57,7 +57,10 @@ const SaleInvoicePage = () => {
 
         if (!date) return "-";
 
-        return new Date(date).toLocaleString("es-CO");
+        return new Date(date).toLocaleString("es-CO", {
+            dateStyle: "long",
+            timeStyle: "short"
+        });
 
     };
 
@@ -75,7 +78,45 @@ const SaleInvoicePage = () => {
                 return "Transferencia";
 
             default:
-                return method;
+                return method || "-";
+
+        }
+    };
+
+    const getStatus = (status) => {
+
+        switch (status) {
+
+            case "COMPLETED":
+                return "Completada";
+
+            case "PENDING":
+                return "Pendiente";
+
+            case "CANCELLED":
+                return "Cancelada";
+
+            default:
+                return status || "-";
+
+        }
+    };
+
+    const getStatusClass = (status) => {
+
+        switch (status) {
+
+            case "COMPLETED":
+                return "bg-green-100 text-green-700";
+
+            case "PENDING":
+                return "bg-yellow-100 text-yellow-700";
+
+            case "CANCELLED":
+                return "bg-red-100 text-red-700";
+
+            default:
+                return "bg-gray-100 text-gray-700";
 
         }
     };
@@ -98,14 +139,13 @@ const SaleInvoicePage = () => {
 
         <div className="p-6">
 
-            {/* Encabezado */}
-
-            <div className="flex justify-between items-center mb-6">
+            {/* ENCABEZADO */}
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
 
                 <div>
 
                     <h1 className="text-3xl font-bold text-gray-800">
-                        Factura #{sale.id}
+                        Factura #{String(sale.id).padStart(6, "0")}
                     </h1>
 
                     <p className="text-gray-500 mt-1">
@@ -115,6 +155,7 @@ const SaleInvoicePage = () => {
                 </div>
 
                 <button
+                    type="button"
                     onClick={() => navigate("/ventas")}
                     className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition"
                 >
@@ -123,15 +164,13 @@ const SaleInvoicePage = () => {
 
             </div>
 
-            {/* Factura */}
-
+            {/* FACTURA */}
             <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm overflow-hidden">
 
-                {/* Cabecera */}
-
+                {/* CABECERA */}
                 <div className="p-8 border-b border-gray-200">
 
-                    <div className="flex justify-between">
+                    <div className="flex flex-col md:flex-row md:justify-between gap-6">
 
                         <div>
 
@@ -145,13 +184,13 @@ const SaleInvoicePage = () => {
 
                         </div>
 
-                        <div className="text-right">
+                        <div className="md:text-right">
 
                             <p className="text-sm text-gray-500">
                                 FACTURA
                             </p>
 
-                            <p className="text-xl font-bold text-gray-800">
+                            <p className="text-2xl font-bold text-gray-800">
                                 #{String(sale.id).padStart(6, "0")}
                             </p>
 
@@ -161,8 +200,7 @@ const SaleInvoicePage = () => {
 
                 </div>
 
-                {/* Información */}
-
+                {/* INFORMACIÓN DE LA VENTA */}
                 <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-6 border-b border-gray-200">
 
                     <div>
@@ -171,8 +209,8 @@ const SaleInvoicePage = () => {
                             Fecha
                         </p>
 
-                        <p className="font-semibold text-gray-800">
-                            {formatDate(sale.registrationDate)}
+                        <p className="font-semibold text-gray-800 mt-1">
+                            {formatDate(sale.createdAt)}
                         </p>
 
                     </div>
@@ -183,7 +221,7 @@ const SaleInvoicePage = () => {
                             Método de pago
                         </p>
 
-                        <p className="font-semibold text-gray-800">
+                        <p className="font-semibold text-gray-800 mt-1">
                             {getPaymentMethod(sale.paymentMethod)}
                         </p>
 
@@ -195,18 +233,74 @@ const SaleInvoicePage = () => {
                             Estado
                         </p>
 
-                        <span className="inline-block mt-1 px-3 py-1 rounded-full text-sm bg-green-100 text-green-700">
-                            {sale.status === "COMPLETED"
-                                ? "Completada"
-                                : sale.status}
+                        <span
+                            className={`inline-flex mt-1 px-3 py-1 rounded-full text-sm font-medium ${getStatusClass(
+                                sale.status
+                            )}`}
+                        >
+                            {getStatus(sale.status)}
                         </span>
 
                     </div>
 
                 </div>
 
-                {/* Productos */}
+                {/* CLIENTE */}
+                <div className="p-8 border-b border-gray-200">
 
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                        Cliente
+                    </h3>
+
+                    {sale.customerId ? (
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                            <div>
+
+                                <p className="text-sm text-gray-500">
+                                    Nombre completo
+                                </p>
+
+                                <p className="font-semibold text-gray-800 mt-1">
+                                    {sale.customerName}
+                                </p>
+
+                            </div>
+
+                            <div>
+
+                                <p className="text-sm text-gray-500">
+                                    Documento
+                                </p>
+
+                                <p className="font-semibold text-gray-800 mt-1">
+                                    {sale.customerDocumentNumber}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    ) : (
+
+                        <div className="bg-gray-50 rounded-lg p-4">
+
+                            <p className="font-semibold text-gray-800">
+                                Consumidor final
+                            </p>
+
+                            <p className="text-sm text-gray-500 mt-1">
+                                Esta venta no fue asociada a un cliente registrado.
+                            </p>
+
+                        </div>
+
+                    )}
+
+                </div>
+
+                {/* PRODUCTOS */}
                 <div className="p-8">
 
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">
@@ -243,10 +337,10 @@ const SaleInvoicePage = () => {
 
                             <tbody>
 
-                                {sale.details?.map((detail) => (
+                                {sale.details?.map((detail, index) => (
 
                                     <tr
-                                        key={detail.productId}
+                                        key={`${detail.productId}-${index}`}
                                         className="border-b border-gray-100"
                                     >
 
@@ -262,15 +356,15 @@ const SaleInvoicePage = () => {
 
                                         </td>
 
-                                        <td className="text-center py-4">
+                                        <td className="text-center py-4 text-gray-700">
                                             {detail.quantity}
                                         </td>
 
-                                        <td className="text-right py-4">
+                                        <td className="text-right py-4 text-gray-700">
                                             {formatCurrency(detail.unitPrice)}
                                         </td>
 
-                                        <td className="text-right py-4 font-semibold">
+                                        <td className="text-right py-4 font-semibold text-gray-800">
                                             {formatCurrency(detail.subtotal)}
                                         </td>
 
@@ -286,21 +380,20 @@ const SaleInvoicePage = () => {
 
                 </div>
 
-                {/* Total */}
-
-                <div className="p-8 border-t border-gray-200">
+                {/* TOTAL */}
+                <div className="px-8 pb-8">
 
                     <div className="flex justify-end">
 
-                        <div className="w-full md:w-80">
+                        <div className="w-full md:w-80 border-t border-gray-200 pt-5">
 
-                            <div className="flex justify-between text-xl font-bold text-gray-800">
+                            <div className="flex justify-between items-center">
 
-                                <span>
+                                <span className="text-lg font-semibold text-gray-700">
                                     TOTAL
                                 </span>
 
-                                <span>
+                                <span className="text-2xl font-bold text-gray-800">
                                     {formatCurrency(sale.total)}
                                 </span>
 
@@ -312,11 +405,11 @@ const SaleInvoicePage = () => {
 
                 </div>
 
-                {/* Botones */}
-
-                <div className="p-8 bg-gray-50 flex justify-end gap-3">
+                {/* BOTONES */}
+                <div className="p-8 bg-gray-50 flex flex-col sm:flex-row justify-end gap-3">
 
                     <button
+                        type="button"
                         onClick={() => navigate("/ventas")}
                         className="px-5 py-2 border border-gray-300 rounded-lg hover:bg-white transition"
                     >
@@ -324,6 +417,7 @@ const SaleInvoicePage = () => {
                     </button>
 
                     <button
+                        type="button"
                         onClick={() => window.print()}
                         className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                     >

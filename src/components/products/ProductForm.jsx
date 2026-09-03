@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import brandService from '../../services/brandService';
 import productService from '../../services/productService';
+import Alert from '../ui/Alert';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -42,40 +43,127 @@ export const ProductForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!brandId) {
-      alert('Debe seleccionar una marca.');
+    // Código
+    if (!code.trim()) {
+      await Alert.warning({
+        title: 'Código obligatorio',
+        text: 'Debe ingresar el código o SKU del producto.',
+      });
       return;
     }
 
-    // Construimos el objeto EXACTAMENTE como lo pide Product.java
+    // Nombre
+    if (!name.trim()) {
+      await Alert.warning({
+        title: 'Nombre obligatorio',
+        text: 'Debe ingresar el nombre del producto.',
+      });
+      return;
+    }
+
+    // Marca
+    if (!brandId) {
+      await Alert.warning({
+        title: 'Marca obligatoria',
+        text: 'Debe seleccionar una marca.',
+      });
+      return;
+    }
+
+    // Precio de compra
+    if (!purchasePrice || Number(purchasePrice) < 0) {
+      await Alert.warning({
+        title: 'Precio de compra obligatorio',
+        text: 'Debe ingresar un precio de compra válido.',
+      });
+      return;
+    }
+
+    // Precio de venta
+    if (!salePrice || Number(salePrice) < 0) {
+      await Alert.warning({
+        title: 'Precio de venta obligatorio',
+        text: 'Debe ingresar un precio de venta válido.',
+      });
+      return;
+    }
+
+    // Stock actual
+    if (currentStock === '' || Number(currentStock) < 0) {
+      await Alert.warning({
+        title: 'Stock actual obligatorio',
+        text: 'Debe ingresar el stock actual del producto.',
+      });
+      return;
+    }
+
+    // Stock mínimo
+    if (minimumStock === '' || Number(minimumStock) < 0) {
+      await Alert.warning({
+        title: 'Stock mínimo obligatorio',
+        text: 'Debe ingresar el stock mínimo del producto.',
+      });
+      return;
+    }
+
+    // Unidad de medida
+    if (!unitOfMeasure) {
+      await Alert.warning({
+        title: 'Unidad de medida obligatoria',
+        text: 'Debe seleccionar una unidad de medida.',
+      });
+      return;
+    }
+
+    // Estado
+    if (!status) {
+      await Alert.warning({
+        title: 'Estado obligatorio',
+        text: 'Debe seleccionar el estado del producto.',
+      });
+      return;
+    }
+
+    // Datos del producto
     const productData = {
-      code: code,
-      name: name,
-      description: description,
+      code: code.trim(),
+      name: name.trim(),
+      description: description.trim(), // OPCIONAL
       brandId: Number(brandId),
-      imageUrl: imageUrl,
+      imageUrl: imageUrl.trim(),       // OPCIONAL
       purchasePrice: Number(purchasePrice),
       salePrice: Number(salePrice),
       currentStock: Number(currentStock),
       minimumStock: Number(minimumStock),
-      unitOfMeasure: unitOfMeasure, // Asegúrate de elegir una opción del select
-      status: status // Asegúrate de elegir una opción del select
+      unitOfMeasure,
+      status
     };
 
-    console.log(productData);
-
     try {
-      // Enviamos el objeto plano por Axios
       await productService.createProduct(productData);
-      alert('¡Producto guardado con éxito!');
-      navigate('/inventario/productos'); // Redirige a la lista de productos después de guardar
+
+      await Alert.success({
+        title: '¡Producto creado!',
+        text: `El producto "${name}" fue creado correctamente.`,
+      });
+
+      navigate('/inventario/productos');
+
     } catch (error) {
-      console.error(error);
-      alert('Hubo un error al guardar el producto');
+      console.error('Error creando producto:', error);
+
+      let mensaje = 'No se pudo crear el producto.';
+
+      if (error.response?.data?.message) {
+        mensaje = error.response.data.message;
+      }
+
+      await Alert.error({
+        title: 'Error al crear producto',
+        text: mensaje,
+      });
     }
   };
-
-
 
   return (
     <form

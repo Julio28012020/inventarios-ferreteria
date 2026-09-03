@@ -44,8 +44,8 @@ const Sidebar = () => {
             <Link
               to="/ventas"
               className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive("/ventas")
-                  ? "bg-blue-600 text-white"
-                  : "hover:bg-slate-800 hover:text-white"
+                ? "bg-blue-600 text-white"
+                : "hover:bg-slate-800 hover:text-white"
                 }`}
             >
               <span>🛒</span> Ventas
@@ -60,6 +60,18 @@ const Sidebar = () => {
                 }`}
             >
               <span>🚚</span> Proveedores
+            </Link>
+          </li>
+
+          <li>
+            <Link
+              to="/clientes"
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive("/clientes")
+                  ? "bg-blue-600 text-white"
+                  : "hover:bg-slate-800 hover:text-white"
+                }`}
+            >
+              <span>👥</span> Clientes
             </Link>
           </li>
         </ul>

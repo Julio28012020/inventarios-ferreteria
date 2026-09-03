@@ -2,9 +2,15 @@ import axiosClient from '../config/axiosClient';
 
 const productService = {
 
-  // Obtener todos los productos
+  // Obtener todos los productos para Inventario
   getAllProducts: async () => {
     const response = await axiosClient.get('/products');
+    return response.data;
+  },
+
+  // Obtener solo productos activos para Ventas
+  getActiveProducts: async () => {
+    const response = await axiosClient.get('/products/active');
     return response.data;
   },
 
