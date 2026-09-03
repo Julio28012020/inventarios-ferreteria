@@ -8,6 +8,8 @@ import { ProductForm } from '../components/products/ProductForm';
 import EditProductPage from '../pages/EditProductPage';
 import { SuppliersPage } from '../pages/SuppliersPage';
 import { NewSupplierPage } from '../pages/NewSupplierPage';
+import { CustomersPage } from '../pages/CustomersPage';
+import { CustomerForm } from "../pages/CustomerForm";
 
 export const AppRouter = () => {
   return (
@@ -21,6 +23,9 @@ export const AppRouter = () => {
           <Route path="/ventas/historial" element={<SalesHistoryPage />} />
           <Route path='/proveedores' element={<SuppliersPage />} />
           <Route path="/proveedores/nuevo" element={<NewSupplierPage />} />
+          <Route path='/clientes' element={<CustomersPage />} />
+          <Route path="/clientes/nuevo" element={<CustomerForm />} />
+          <Route path="/clientes/editar/:id" element={<CustomerForm />} />
           <Route
             path="/inventario/nuevo"
             element={

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import brandService from "../services/brandService";
 import productService from "../services/productService";
+import Alert from "../components/ui/Alert";
 
 const EditProductPage = () => {
   const { id } = useParams();
@@ -59,8 +60,14 @@ const EditProductPage = () => {
 
       } catch (error) {
         console.error('Error cargando el producto:', error);
-        alert('No se pudo cargar el producto.');
-        navigate('/inventario');
+
+        await Alert.error({
+          title: 'Error al cargar',
+          text: 'No se pudo cargar el producto.',
+        });
+
+        navigate('/inventario/productos');
+
       } finally {
         setLoading(false);
       }
@@ -72,12 +79,63 @@ const EditProductPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!code.trim()) {
+      await Alert.warning({
+        title: 'Código requerido',
+        text: 'Debe ingresar el código o SKU del producto.',
+      });
+      return;
+    }
+
+    if (!name.trim()) {
+      await Alert.warning({
+        title: 'Nombre requerido',
+        text: 'Debe ingresar el nombre del producto.',
+      });
+      return;
+    }
+
+    if (!brandId) {
+      await Alert.warning({
+        title: 'Marca requerida',
+        text: 'Debe seleccionar una marca.',
+      });
+      return;
+    }
+
+    if (!salePrice || Number(salePrice) < 0) {
+      await Alert.warning({
+        title: 'Precio de venta inválido',
+        text: 'Ingrese un precio de venta válido.',
+      });
+      return;
+    }
+
+    if (!minimumStock || Number(minimumStock) < 0) {
+      await Alert.warning({
+        title: 'Stock mínimo inválido',
+        text: 'Ingrese un stock mínimo válido.',
+      });
+      return;
+    }
+
+    const result = await Alert.question({
+      title: '¿Guardar cambios?',
+      text: `Se actualizará la información del producto "${name}".`,
+      confirmText: 'Sí, guardar cambios',
+      cancelText: 'Cancelar',
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
     const productData = {
-      code,
-      name,
-      description,
+      code: code.trim(),
+      name: name.trim(),
+      description: description.trim(),
       brandId: Number(brandId),
-      imageUrl,
+      imageUrl: imageUrl.trim(),
       purchasePrice: Number(purchasePrice),
       salePrice: Number(salePrice),
       minimumStock: Number(minimumStock),
@@ -86,15 +144,27 @@ const EditProductPage = () => {
     };
 
     try {
+
       await productService.updateProduct(id, productData);
 
-      alert('¡Producto actualizado correctamente!');
+      await Alert.success({
+        title: 'Producto actualizado',
+        text: `El producto "${name}" fue actualizado correctamente.`,
+        confirmText: 'Continuar',
+      });
 
       navigate('/inventario/productos');
 
     } catch (error) {
+
       console.error('Error actualizando producto:', error);
-      alert('Hubo un error al actualizar el producto.');
+
+      await Alert.error({
+        title: 'No se pudo actualizar',
+        text:
+          error.response?.data?.message ||
+          'Ocurrió un error al actualizar el producto.',
+      });
     }
   };
 
